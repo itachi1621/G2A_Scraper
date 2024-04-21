@@ -1,0 +1,6 @@
+__pycache__
+my_env
+.env
+custom_functions/__pycache__
+g2a_*.html
+g2a_*.txt

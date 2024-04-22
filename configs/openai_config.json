@@ -8,7 +8,7 @@
         },
         {
             "role":"system",
-            "content":"ensure that the table is responsive and looks good on mobile devices and has a title"
+            "content":"ensure that the table is responsive and looks good on mobile devices and has a title give it a blue color"
 
         },
         {

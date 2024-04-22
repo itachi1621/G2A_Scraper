@@ -1,12 +1,14 @@
 from mailersend import emails;
 
-def send_email(from_email,recipients:list,subject,text,html,api_key:str=None):
+def send_email(from_email,from_name,recipients:list,subject,text,html,api_key:str=None):
     try:
         mailer = emails.NewEmail(api_key)
         mail_body = {}
         mail_from ={
+            "name": from_name,
             "email": from_email
         }
+
         recipients = [{"email": recipient} for recipient in recipients]
         mailer.set_mail_from(mail_from,mail_body)
         mailer.set_mail_to(recipients,mail_body)

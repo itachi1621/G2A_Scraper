@@ -37,6 +37,8 @@ for product in g2a_config['products']:
 
     try:
         page_data = scrape_site(product['product_link'])
+        #Remember to rewrite this later to be more efficient for multiple sites currently it will launch a headless browser for each product
+        #Ill probably need to rewrite this block to be a function that returns the page_data for each product type
 
 
         soup = BeautifulSoup(page_data, 'html.parser')

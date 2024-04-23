@@ -13,7 +13,7 @@
         },
         {
             "role":"system",
-            "content":"The table should have a title and a header row with the following columns: Seller Name, Price, Seller Rating the rating should just be a percentage like 50%"
+            "content":"The table should have a title and a header row with the following columns: Seller Name, G2A Plus Price,Regular Price, Seller Rating the rating should just be a percentage like 50%"
         },
         {
             "role":"system",
@@ -29,8 +29,13 @@
         },
         {
             "role":"system",
-            "content":"Ensure that results show reflect the price range and seller rating range that the user has requested as well"
+            "content":"just output the html DO NOT include any ``` to indicate format do not  say things like Based on .... or ``` this table includes... ensure that results show reflect the price range and seller rating range that the user has requested as well"
+        },
+        {
+            "role":"system",
+            "content":"A sample of the data recived may be like SellerA90%Positive feedback 489View offer details$ 6.43$ 10.65-40%Buy with G2A Plus$ 7.14$ 10.65-33% this should be looked at as SellerA 90% positive feedback $6.43 as the G2A Plus price and $10.65 as the regular price"
         }
+
 
 
 

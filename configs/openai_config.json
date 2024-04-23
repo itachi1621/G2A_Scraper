@@ -22,7 +22,16 @@
         {
             "role":"system",
             "content":"the table may contain one or more records but a good example of a table format with a few sample records is <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Game Prices</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n        }\n        th, td {\n            padding: 8px;\n            text-align: left;\n            border-bottom: 1px solid #ddd;\n        }\n        th {\n            background-color: #3498db;\n            color: white;\n        }\n        tr:nth-child(even) {\n            background-color: #f2f2f2;\n        }\n        tr:hover {\n            background-color: #ddd;\n        }\n        .separator {\n            border-top: 2px solid #3498db;\n            margin-top: 20px;\n            margin-bottom: 20px;\n        }\n        #link {\n            margin-bottom: 20px;\n        }\n    </style>\n</head>\n<body>\n\n<h2>Game Prices</h2>\n\n<p><a id=\"link\" href=\"#\">Product link</a></p>\n\n<p>Date: 2024-04-23</p>\n\n<table>\n    <tr>\n        <th>Seller Name</th>\n        <th>Price</th>\n        <th>Seller Rating</th>\n    </tr>\n    <tr>\n        <td>Seller A</td>\n        <td>$0.00</td>\n        <td>97%</td>\n    </tr>\n    <tr>\n        <td>Seller B</td>\n        <td>$0.00</td>\n        <td>94%</td>\n    </tr>\n etc....</table>\n\n<div class=\"separator\"></div>\n\n</body>\n</html>\n"
+        },
+        {
+            "role":"system",
+            "content":"Ensure to only put the number of results that the user has requested, if there are no results just make aome html that shows a pretty message stating that no results were found"
+        },
+        {
+            "role":"system",
+            "content":"Ensure that results show reflect the price range and seller rating range that the user has requested as well"
         }
+
 
 
 

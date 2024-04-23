@@ -19,7 +19,7 @@ def makeHTMLTable(html_data,open_ai_key=None,assistant_config=None,table_title:s
         }
 
         data = assistant_config
-        data['messages'].append({"role": "user","content": "The title for this table is: "+table_title + " and the link for the site is: "+table_link+" please include it , the minimum seller rating  when making the table is: "+str(minimum_seller_rating)+"anything under that rating should be ignored"+" , the max price is: "+str(max_price)+" the max results to be shown in this table is: "+str(max_results)})
+        data['messages'].append({"role": "user","content": "The title for this table is: "+table_title + " and the link for the site is: "+table_link+" please include it , the minimum seller rating  when making the table is: "+str(minimum_seller_rating)+"anything under that rating should be ignored"+" , the max price to be shown in the table is: "+str(max_price)+" the max results to be shown in this table is: "+str(max_results)})
         data['messages'].append({"role": "user","content":"include todays date in the html body with an h2 tag make it look nice, todays date is"+str(time.strftime("%Y-%m-%d"))})
         data['messages'].append({"role": "user","content": html_data})
 

@@ -1,5 +1,5 @@
 import requests
-
+import time
 def makeHTMLTable(html_data,open_ai_key=None,assistant_config=None,table_title:str="",table_link:str="",minimum_seller_rating:int=0,max_price:int=0,max_results:int=5):
 
 
@@ -19,8 +19,8 @@ def makeHTMLTable(html_data,open_ai_key=None,assistant_config=None,table_title:s
         }
 
         data = assistant_config
-        data['messages'].append({"role": "user","content": "The title for this table is: "+table_title + " and the link is: "+table_link+" and the minimum seller rating is: "+str(minimum_seller_rating)+" and the max price is: "+str(max_price)+" and the max results to be shown in this table is: "+str(max_results)})
-
+        data['messages'].append({"role": "user","content": "The title for this table is: "+table_title + " and the link for the site is: "+table_link+" please include it , the minimum seller rating  when making the table is: "+str(minimum_seller_rating)+"anything under that rating should be ignored"+" , the max price is: "+str(max_price)+" the max results to be shown in this table is: "+str(max_results)})
+        data['messages'].append({"role": "user","content":"include todays date in the html body with an h2 tag make it look nice, todays date is"+str(time.strftime("%Y-%m-%d"))})
         data['messages'].append({"role": "user","content": html_data})
 
         response = requests.Session()
@@ -32,4 +32,5 @@ def makeHTMLTable(html_data,open_ai_key=None,assistant_config=None,table_title:s
         else:
             return response # Ill add in retry logic later
     except Exception as e:
+        print(e)
         return e

@@ -17,8 +17,10 @@ def send_email(from_email,from_name,recipients:list,subject,text,html,api_key:st
         mailer.set_html_content(html,mail_body)
         response = mailer.send(mail_body)
         print(response)
+        print('Email sent successfully')
     except Exception as e:
         print(e)
+        print('Email failed to send')
         return False
 
 

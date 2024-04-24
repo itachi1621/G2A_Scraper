@@ -4,9 +4,8 @@ import json
 import re
 import os
 import logging
-from bs4 import BeautifulSoup
 from custom_functions.mailersend_funcs import send_email
-from custom_functions.scrapping_funcs import scrape_site,scrape_site_pages
+from custom_functions.scrapping_funcs import scrape_site,scrape_site_pages,extract_data
 from custom_functions.openai_funcs import makeHTMLTable
 
 
@@ -38,7 +37,7 @@ def start_scraping_process(g2a_config,oi_config,urls:list,mode:str='single'):
     try:
         page_data = []
         if(mode == 'single'):
-            page_data=scrape_site(urls[0])
+            page_data=scrape_site(urls[0],10,10)
 
 
         elif(mode == 'multi'):
@@ -49,21 +48,30 @@ def start_scraping_process(g2a_config,oi_config,urls:list,mode:str='single'):
             print("Invalid mode")
             return None
         if(len(page_data) == 1):
-            soup = BeautifulSoup(page_data[0], 'html.parser')
+           # soup = BeautifulSoup(page_data[0], 'html.parser')
             for product in g2a_config['products']:
-                section =  re.sub('\s{2,}',' ', soup.find_all('ul', class_=re.compile(r'indexes__StyledOffersListItemContainer'))[0].text)
-                html_table = makeHTMLTable(section,OPENAI_API_KEY,oi_config,product['product_name'],product['product_link'],product['minimum_seller_rating'],product['max_price'],product['max_results'])
-                send_email(MAILERSEND_FROM,MAILERSEND_FROM_NAME,product['mailing_list'],product['product_name'],"",html_table,MAILERSEND_API_KEY)
+                section = page_data
+                #re.sub('\s{2,}',' ', soup.find_all('ul', class_=re.compile(r'indexes__StyledOffersListItemContainer-sc'))[0].text)
+               #convert to string
+
+                section = str(section)
+                with open('test2.txt', 'w') as f:
+                    f.write(section)
+                section = str(extract_data(section))
+                with open('test.txt', 'w') as f:
+                    f.write(section)
+                #html_table = makeHTMLTable(section,OPENAI_API_KEY,oi_config,product['product_name'],product['product_link'],product['minimum_seller_rating'],product['max_price'],product['max_results'])
+                #send_email(MAILERSEND_FROM,MAILERSEND_FROM_NAME,product['mailing_list'],product['product_name'],"",html_table,MAILERSEND_API_KEY)
         elif(len(page_data) > 1):
             product = g2a_config['products']
 
             for i in range(len(urls)):# the order of the page_data should match the order of the urls so i can use the index to get the correct url
-                soup = BeautifulSoup(page_data[i], 'html.parser')
+                #soup = BeautifulSoup(page_data[i], 'html.parser')
 
-                section =  re.sub('\s{2,}',' ', soup.find_all('ul', class_=re.compile(r'indexes__StyledOffersListItemContainer'))[0].text)
-                html_table = makeHTMLTable(section,OPENAI_API_KEY,oi_config,product[i]['product_name'],urls[i],product[i]['minimum_seller_rating'],product[i]['max_price'],product[i]['max_results'])
-                send_email(MAILERSEND_FROM,MAILERSEND_FROM_NAME,product[i]['mailing_list'],product[i]['product_name'],"",html_table,MAILERSEND_API_KEY)
-
+               # section =  re.sub('\s{2,}',' ', soup.find_all('ul', class_=re.compile(r'indexes__StyledOffersListItemContainer'))[0].text)
+               # html_table = makeHTMLTable(section,OPENAI_API_KEY,oi_config,product[i]['product_name'],urls[i],product[i]['minimum_seller_rating'],product[i]['max_price'],product[i]['max_results'])
+               # send_email(MAILERSEND_FROM,MAILERSEND_FROM_NAME,product[i]['mailing_list'],product[i]['product_name'],"",html_table,MAILERSEND_API_KEY)
+                section = page_data[i]
 
 
         else:

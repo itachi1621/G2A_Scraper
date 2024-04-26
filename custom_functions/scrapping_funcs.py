@@ -6,9 +6,13 @@ from bs4 import BeautifulSoup
 import time
 import re
 
-def scrape_site(url:str,implicit_wait_time:int=10,timer_wait_time:int=5,retry_limit:int=3,is_retry:bool=False):
+def scrape_site(g2a_config:list,implicit_wait_time:int=10,timer_wait_time:int=6,retry_limit:int=4):
     try:
-        if not is_retry:
+
+        g2a_data = g2a_config.copy()
+
+        for i in range(retry_limit):
+            # Needed to start a whole new driver instance because the site may have some anti scrapping nonsense that prevents the driver from getting the data sometimes but not always
             user_agent = UserAgent()
             options = Options()
             options.add_argument('-headless')
@@ -18,62 +22,88 @@ def scrape_site(url:str,implicit_wait_time:int=10,timer_wait_time:int=5,retry_li
             options.add_argument(f'user-agent={user_agent.random}')
             options.page_load_strategy = 'none'
             driver = webdriver.Chrome(options=options)
-
-        page_data = []
-        if is_retry is True and retry_limit == 0:
-            driver.quit()
-            return None
-
-        driver.implicitly_wait(implicit_wait_time)
-        driver.get(url)
-        time.sleep(timer_wait_time)
-
-        soup = BeautifulSoup(page_data[0], 'html.parser')
-        data =  re.sub('\s{2,}',' ', soup.find_all('ul', class_=re.compile(r'indexes__StyledOffersListItemContainer-sc'))[0].text)
-        if(not isProductCheck(data)):
-            print('Data not found retrying')
-            driver.delete_all_cookies()
-            scrape_site(url,implicit_wait_time,timer_wait_time,retry_limit-1,True)
-        elif(isProductCheck):
-
-
-            page_data.append(driver.page_source)
-            driver.quit()
-            return page_data
-
-    except Exception as e:
-        print(e)
-        return None
-def scrape_site_pages(urls:list,implicit_wait_time:int=10,timer_wait_time:int=5):
-    try:
-        user_agent = UserAgent()
-        options = Options()
-        options.add_argument('-headless')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        #user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-        options.add_argument(f'user-agent={user_agent.random}')
-        options.page_load_strategy = 'none'
-        driver = webdriver.Chrome(options=options)
-        driver.implicitly_wait(implicit_wait_time)
-        page_data = []
-        for url in urls:
+            driver.implicitly_wait(implicit_wait_time)
+                #page_data = []
+            url = g2a_data['products'][0]['product_link']
+            #print(url)
             driver.get(url)
-            time.sleep(timer_wait_time)
-            page_data.append(driver.page_source)
-            #clear data
-            driver.delete_all_cookies() #g2a was blocking after the first page :( so i had to clear the cookies from last request before making next one
+            time.sleep(timer_wait_time+retry_limit)
 
+            soup =  BeautifulSoup(driver.page_source, 'html.parser')
+            data =  re.sub('\s{2,}',' ', soup.find_all('ul', class_=re.compile(r'indexes__StyledOffersListItemContainer-sc'))[0].text)
+           # print(data)
+            isProduct= isProductCheck(data)
+            if(not isProduct):
+                print('Data not found retrying')
+                driver.delete_all_cookies()
+                #options.add_argument(f'user-agent={user_agent.random})')
+                driver.quit()
+                continue
+            elif(isProduct):
 
+                #page_data.append(data)
+                g2a_data['products'][0]['product_data'] = data
+                driver.quit()
+                return g2a_config
 
-
-        driver.quit()
-        return page_data
+        raise Exception("Couldn't retrieve data")
 
     except Exception as e:
-        print(e)
         driver.quit()
+        print(e)
         return None
+
+def scrape_site_pages(g2a_config,implicit_wait_time:int=10,timer_wait_time:int=6,retry_limit:int=4):
+    try:
+        g2a_data = g2a_config.copy()
+        for i in range(len(g2a_data['products'])):
+            contained_product = False
+            for j in range(retry_limit):
+                # Needed to start a whole new driver instance because the site may have some anti scrapping nonsense that prevents the driver from getting the data sometimes but not always
+                print("Try number: ",j+1)
+                user_agent = UserAgent()
+                options = Options()
+                options.add_argument('-headless')
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
+                #user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+                options.add_argument(f'user-agent={user_agent.random}')
+                options.page_load_strategy = 'none'
+                driver = webdriver.Chrome(options=options)
+                driver.implicitly_wait(implicit_wait_time)
+                url = g2a_data['products'][i]['product_link']
+                driver.get(url)
+                time.sleep(timer_wait_time+retry_limit)
+
+                soup =  BeautifulSoup(driver.page_source, 'html.parser')
+                data =  re.sub('\s{2,}',' ', soup.find_all('ul', class_=re.compile(r'indexes__StyledOffersListItemContainer-sc'))[0].text)
+                isProduct= isProductCheck(data)
+                if(not isProduct):
+                    print('Data not found retrying')
+                    driver.delete_all_cookies()
+                    driver.quit()
+                    continue
+                elif(isProduct):
+                    g2a_data['products'][i]['product_data'] = data
+                    contained_product = True
+                    driver.quit()
+                    break
+
+        #if product data is not found in the page_data then lets remove it from the list
+        if not contained_product:
+            g2a_data['products'].pop(i)
+            i -= 1
+
+        return g2a_data
+        #need to send i back by one so that the loop doesn't skip the next product pop will reindex
+
+
+    except Exception as e:
+        driver.quit()
+        print(e)
+        return None
+
+
 
 
 def extract_data(data):
@@ -107,13 +137,4 @@ def isProductCheck(data): #So turns out that the data doesn't always contain the
        return True
    else:
        return False
-
-sample_data = """
-Gamehive97%400Buyers'
-feedback (last 12 months)37613View commentsAsk about the product
-This seller does not issue invoices.Seller's store$ 7.13
-Boings90%491Buyers' feedback (last 12 months)42749View commentsAsk about the productThis seller does not issue invoices.Seller's store$ 7.13WeWestgaming94%520Buyers' feedback (last 12 months)48331View commentsAsk about the productThis seller does not issue invoices.Seller's store$ 7.45Digitaldistribucion78%1297Buyers' feedback (last 12 months)988271View commentsAsk about the productThis seller issues invoices.Seller's store$ 8.32Leveluplegends96%393Buyers' feedback (last 12 months)31313View commentsAsk about the productThis seller does not issue invoices.Seller's store$ 8.62AmAmanda_game94%628Buyers' feedback (last 12 months)58037View commentsAsk about the productThis seller does not issue invoices.Seller's store$ 10.89Lordofstorms99%5677Buyers' feedback (last 12 months)526029View commentsAsk about the productExcellent sellerThis seller has received exceptionally high ratings from buyers for outstanding customer service.This seller does not issue invoices.Seller's store$ 11.55
-"""
-
-print(isProductCheck(sample_data))
 

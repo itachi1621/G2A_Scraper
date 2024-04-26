@@ -1,12 +1,22 @@
 import requests
 import time
-def makeHTMLTable(html_data,open_ai_key=None,assistant_config=None,table_title:str="",table_link:str="",minimum_seller_rating:int=0,max_price:int=0,max_results:int=5):
+def makeHTMLTable(html_data,open_ai_key=None,assistant_config=None,product_data:list=[]):
+
+
+    table_title = product_data['product_name']
+    table_link = product_data['product_link']
+    minimum_seller_rating = product_data['minimum_seller_rating']
+    max_price = product_data['max_price']
+    max_results = product_data['max_results']
 
 
 
 
     #add the assistant config to the data message
    # data['messages'].append(assistant_config)
+   #convert html data to safe string this means no ' or " in the string
+    #html_data = html_data.replace('"',"'")
+
 
     try :
         if open_ai_key is None:

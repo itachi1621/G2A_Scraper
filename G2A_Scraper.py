@@ -61,7 +61,7 @@ def start_scraping_process(g2a_config,oi_config,mode:str='single'):
             #print(section)
             #section =
             #page_data['products'][0]['product_data']
-            html_table = makeHTMLTable(section,OPENAI_API_KEY,oi_config,page_data['products'])
+            html_table = makeHTMLTable(section,OPENAI_API_KEY,oi_config,page_data['products'][0])
             #print(html_table)
             send_email(MAILERSEND_FROM,MAILERSEND_FROM_NAME,page_data['products'][0]['mailing_list'],page_data['products'][0]['product_name'] ,"",html_table,MAILERSEND_API_KEY)
             """ if( result == "202" or result == "200"):

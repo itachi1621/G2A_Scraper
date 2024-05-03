@@ -10,7 +10,7 @@ This Python script scrapes product information from G2A, extracts pricing, ratin
   - `bs4` (BeautifulSoup)
   - `requests`
   - `mailer-send`
-  
+- Chrome or Chromium
 ## Setup
 
 1. Clone this repository:
@@ -35,14 +35,17 @@ SELENIUM_IMPLICIT_WAIT_TIME=your_selenium_implicit_wait_time
 TIMER_WAIT_TIME=your_timer_wait_time
 ```
 
+### Notes
+** config locations should use the full path to the file
+
 ## Usage
 Run the script.
 ```bash
 python G2A_Scraper.py
 ```
 ## Configuration
-- G2A Configuration File: Configure products and target prices in a JSON file.
-- OpenAI Configuration File: Configure OpenAI settings in a JSON file.
+- G2A Configuration File: Configure products and target prices in the `configs/g2a_config.json` JSON file.
+- OpenAI Configuration File: Configure OpenAI settings in the `configs/openai_config.json` JSON file.
 
 ## Custom Functions
 - mailersend_funcs: Functions related to sending emails using MailerSend.

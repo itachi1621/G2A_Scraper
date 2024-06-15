@@ -15,7 +15,7 @@ def scrape_site(g2a_config:list,implicit_wait_time:int=10,timer_wait_time:int=6,
             # Needed to start a whole new driver instance because the site may have some anti scrapping nonsense that prevents the driver from getting the data sometimes but not always
             user_agent = UserAgent()
             options = Options()
-            options.add_argument('-headless')
+            #options.add_argument('-headless')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
             #user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
